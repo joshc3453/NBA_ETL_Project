@@ -331,3 +331,24 @@
 [2024-03-23T01:35:23.869+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:35:23.869+0000] {dag.py:3047} INFO - Sync 1 DAGs
 [2024-03-23T01:35:23.881+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:35:23.881+0000] {dag.py:3834} INFO - Setting next_dagrun for get_team_standings to 2024-03-22 13:00:00+00:00, run_after=2024-03-23 13:00:00+00:00
 [2024-03-23T01:35:23.890+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/team_stats.py took 0.406 seconds
+[2024-03-23T01:35:54.233+0000] {processor.py:161} INFO - Started process (PID=861) to work on /opt/airflow/dags/team_stats.py
+[2024-03-23T01:35:54.237+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/team_stats.py for tasks to queue
+[2024-03-23T01:35:54.238+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:35:54.237+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/team_stats.py
+[2024-03-23T01:35:54.674+0000] {processor.py:840} INFO - DAG(s) 'get_team_standings' retrieved from /opt/airflow/dags/team_stats.py
+[2024-03-23T01:35:54.719+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:35:54.719+0000] {dag.py:3047} INFO - Sync 1 DAGs
+[2024-03-23T01:35:54.735+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:35:54.735+0000] {dag.py:3834} INFO - Setting next_dagrun for get_team_standings to 2024-03-22 13:00:00+00:00, run_after=2024-03-23 13:00:00+00:00
+[2024-03-23T01:35:54.772+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/team_stats.py took 0.550 seconds
+[2024-03-23T01:36:25.117+0000] {processor.py:161} INFO - Started process (PID=873) to work on /opt/airflow/dags/team_stats.py
+[2024-03-23T01:36:25.120+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/team_stats.py for tasks to queue
+[2024-03-23T01:36:25.121+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:36:25.121+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/team_stats.py
+[2024-03-23T01:36:25.534+0000] {processor.py:840} INFO - DAG(s) 'get_team_standings' retrieved from /opt/airflow/dags/team_stats.py
+[2024-03-23T01:36:25.552+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:36:25.552+0000] {dag.py:3047} INFO - Sync 1 DAGs
+[2024-03-23T01:36:25.564+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:36:25.564+0000] {dag.py:3834} INFO - Setting next_dagrun for get_team_standings to 2024-03-22 13:00:00+00:00, run_after=2024-03-23 13:00:00+00:00
+[2024-03-23T01:36:25.573+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/team_stats.py took 0.464 seconds
+[2024-03-23T01:36:55.971+0000] {processor.py:161} INFO - Started process (PID=885) to work on /opt/airflow/dags/team_stats.py
+[2024-03-23T01:36:55.973+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/team_stats.py for tasks to queue
+[2024-03-23T01:36:55.975+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:36:55.974+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/team_stats.py
+[2024-03-23T01:36:56.330+0000] {processor.py:840} INFO - DAG(s) 'get_team_standings' retrieved from /opt/airflow/dags/team_stats.py
+[2024-03-23T01:36:56.347+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:36:56.346+0000] {dag.py:3047} INFO - Sync 1 DAGs
+[2024-03-23T01:36:56.358+0000] {logging_mixin.py:188} INFO - [2024-03-23T01:36:56.358+0000] {dag.py:3834} INFO - Setting next_dagrun for get_team_standings to 2024-03-22 13:00:00+00:00, run_after=2024-03-23 13:00:00+00:00
+[2024-03-23T01:36:56.368+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/team_stats.py took 0.402 seconds
