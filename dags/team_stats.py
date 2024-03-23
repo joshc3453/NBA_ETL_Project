@@ -52,7 +52,7 @@ def load_data_to_postgres(bucket_name, file_key, **kwargs):
     pg_hook = PostgresHook(postgres_conn_id='postgres_localhost')
     engine = pg_hook.get_sqlalchemy_engine()
     with engine.begin() as conn:
-        df.to_sql('team_standings', conn, if_exists='replace', index=False)
+        df.to_sql('team_standings', conn, if_exists='append', index=False)
 
 with DAG(
     'get_team_standings',
@@ -76,8 +76,9 @@ with DAG(
         task_id='create_postgres_table',
         postgres_conn_id='postgres_localhost',
         sql="""
-            CREATE TABLE IF NOT EXISTS team_standings (
-                teamid TEXT,
+            DROP TABLE IF EXISTS team_standings;
+            CREATE TABLE team_standings (
+                teamid INTEGER PRIMARY KEY,
                 teamname TEXT, 
                 conference TEXT, 
                 record TEXT, 
@@ -92,8 +93,7 @@ with DAG(
                 currentstreak INTEGER, 
                 pointspg FLOAT, 
                 opppointspg FLOAT,
-                diffpointspg FLOAT,
-                primary key (teamid)
+                diffpointspg FLOAT
             );
         """
     )
