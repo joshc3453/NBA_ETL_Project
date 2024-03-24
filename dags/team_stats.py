@@ -75,27 +75,7 @@ with DAG(
     create_postgres_table = PostgresOperator(
         task_id='create_postgres_table',
         postgres_conn_id='postgres_localhost',
-        sql="""
-            DROP TABLE IF EXISTS team_standings;
-            CREATE TABLE team_standings (
-                teamid INTEGER PRIMARY KEY,
-                teamname TEXT, 
-                conference TEXT, 
-                record TEXT, 
-                wins INTEGER,
-                losses INTEGER, 
-                division TEXT, 
-                divisionrecord TEXT,
-                divisionrank INTEGER, 
-                winpct FLOAT, 
-                l10 TEXT, 
-                ot TEXT,
-                currentstreak INTEGER, 
-                pointspg FLOAT, 
-                opppointspg FLOAT,
-                diffpointspg FLOAT
-            );
-        """
+        sql="sql/create_team_standings_table.sql"
     )
 
     add_to_table = PythonOperator(
