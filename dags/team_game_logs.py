@@ -4,7 +4,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from datetime import datetime, timedelta
-from nba_api.stats.endpoints import LeagueStandings
+from nba_api.stats.endpoints.teamgamelogs import TeamGameLogs
 import pandas as pd
 from io import StringIO
 import tempfile
@@ -16,33 +16,19 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-def get_team_standings(bucket_name, execution_date, **kwargs):
-    team_stats = LeagueStandings().get_data_frames()[0]
-    full_team_names = team_stats['TeamCity'] + ' ' + team_stats['TeamName']
-    team_stats['TeamName'] = full_team_names
+def get_team_logs(bucket_name, execution_date, season, **kwargs):
+    team_game_logs = TeamGameLogs(season_nullable=season).get_data_frames()[0]
+    team_game_logs['GAME_DATE'] = pd.to_datetime(team_game_logs['GAME_DATE']).dt.date
 
-    # Rename column(s) for consistency
-    team_stats.rename(columns={'TeamID': 'Team_ID',
-                               'TeamName': 'Team_Name'},
-                                inplace=True)
+    team_game_logs.columns = [c.lower() for c in team_game_logs.columns]
 
-
-    team_stats_clean = team_stats[[
-        'Team_ID', 'Team_Name', 'Conference', 'Record', 'WINS', 'LOSSES', 'Division',
-        'DivisionRecord', 'DivisionRank', 'WinPCT', 'L10', 'OT',
-        'CurrentStreak', 'PointsPG', 'OppPointsPG', 'DiffPointsPG'
-    ]]
-
-    team_stats_clean.columns = [c.lower() for c in team_stats_clean.columns]
-    
     execution_date = datetime.strptime(execution_date, '%Y-%m-%d')
 
-    file_name = f"team_standings_{execution_date.strftime('%Y%m%d')}.csv"
+    file_name = f"team_game_logs_{execution_date.strftime('%Y%m%d')}.csv"
     s3_key = f"nba_logs/{file_name}"
 
-    # Use a temporary file to avoid directory issues
     with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.csv') as tmpfile:
-        team_stats_clean.to_csv(tmpfile.name, index=False)
+        team_game_logs.to_csv(tmpfile.name, index=False)
         tmpfile.flush()
     
         s3_hook = S3Hook()
@@ -59,10 +45,10 @@ def load_data_to_postgres(bucket_name, file_key, **kwargs):
     pg_hook = PostgresHook(postgres_conn_id='postgres_localhost')
     engine = pg_hook.get_sqlalchemy_engine()
     with engine.begin() as conn:
-        df.to_sql('team_standings', conn, if_exists='append', index=False)
+        df.to_sql('team_game_logs', conn, if_exists='append', index=False)
 
 with DAG(
-    'get_team_standings',
+    'get_team_game_logs',
     default_args=default_args,
     description="Automatically updates team standings in a PostgreSQL database.",
     schedule_interval='0 13 * * *',
@@ -70,19 +56,20 @@ with DAG(
     catchup=False,
     tags=['nba', 'jmc'],
 ) as dag:
-    
-    extract_team_standings = PythonOperator(
-        task_id='extract_team_standings',
-        python_callable=get_team_standings,
+
+    extract_team_game_logs = PythonOperator(
+        task_id='extract_team_game_logs',
+        python_callable=get_team_logs,
         op_kwargs={'bucket_name': 'airflow-project-jmc',
-                   'execution_date': '{{ ds }}'
+                   'execution_date': '{{ ds }}',
+                   'season': '2023-24'
                    },
     )
 
     create_postgres_table = PostgresOperator(
         task_id='create_postgres_table',
         postgres_conn_id='postgres_localhost',
-        sql="sql/create_team_standings_table.sql"
+        sql='sql/create_team_game_logs_table.sql',
     )
 
     add_to_table = PythonOperator(
@@ -90,8 +77,8 @@ with DAG(
         python_callable=load_data_to_postgres,
         op_kwargs={
             'bucket_name': 'airflow-project-jmc',
-            'file_key': '{{ ti.xcom_pull(task_ids="extract_team_standings") }}',
-        },
+            'file_key': '{{ ti.xcom_pull(task_ids="extract_team_game_logs") }}',
+        }
     )
 
-    extract_team_standings >> create_postgres_table >> add_to_table
+    extract_team_game_logs >> create_postgres_table >> add_to_table
