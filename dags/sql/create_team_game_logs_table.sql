@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS team_game_logs;
+DROP TABLE IF EXISTS team_game_logs CASCADE;
 CREATE TABLE team_game_logs (
     game_id INTEGER, 
     team_id INTEGER,
@@ -56,7 +56,5 @@ CREATE TABLE team_game_logs (
     pfd_rank INTEGER, 
     pts_rank INTEGER, 
     plus_minus_rank INTEGER,
-    available_flag INTEGER,
-    PRIMARY KEY (game_id, team_id),
-    FOREIGN KEY (team_id) REFERENCES team_standings (team_id)
+    available_flag INTEGER
 );
