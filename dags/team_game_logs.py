@@ -8,6 +8,7 @@ from nba_api.stats.endpoints.teamgamelogs import TeamGameLogs
 import pandas as pd
 from io import StringIO
 import tempfile
+import sqlalchemy.types
 import os
 
 default_args = {
@@ -40,10 +41,11 @@ def load_data_to_postgres(bucket_name, file_key, **kwargs):
     
     s3_hook = S3Hook()
     file_content = s3_hook.read_key(key=file_key, bucket_name=bucket_name)
-    df = pd.read_csv(StringIO(file_content))
+    df = pd.read_csv(StringIO(file_content), dtype={'game_id': str} )
 
     pg_hook = PostgresHook(postgres_conn_id='postgres_localhost')
     engine = pg_hook.get_sqlalchemy_engine()
+
     with engine.begin() as conn:
         df.to_sql('team_game_logs', conn, if_exists='append', index=False)
 

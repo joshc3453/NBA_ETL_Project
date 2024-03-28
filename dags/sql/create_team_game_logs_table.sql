@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS team_game_logs CASCADE;
 CREATE TABLE team_game_logs (
-    game_id INTEGER, 
+    game_id TEXT, -- TEXT in order for leading 0's to remain entact
     team_id INTEGER,
     season_year TEXT,
     team_abbreviation TEXT, 
