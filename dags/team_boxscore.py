@@ -32,7 +32,6 @@ def get_yesterday_games(bucket_name, execution_date, **kwargs):
     yesterday = datetime.now() - timedelta(days=1)
     yesterday_str = yesterday.strftime('%Y-%m-%d')
     yesterday_game_ids = game_id_and_date[game_id_and_date['game_date']==yesterday_str][['game_id']]
-    #yesterday_game_ids = game_id_and_date[game_id_and_date['game_date']=='2024-03-30'][['game_id']]
     yesterday_game_ids = yesterday_game_ids['game_id'].tolist()
 
     accumulated_data = []
@@ -69,16 +68,27 @@ def get_yesterday_games(bucket_name, execution_date, **kwargs):
 
 def load_data_to_postgres(bucket_name, file_key, **kwargs):
     
+    if file_key is None:
+        print('No games played yesterday. Nothing to load into PostgreSQL.')
+        return None
+
     s3_hook = S3Hook()
-    file_content = s3_hook.read_key(key=file_key, bucket_name=bucket_name)
-    df = pd.read_csv(StringIO(file_content), dtype={'game_id': str} )
-    print(df)
+    try:
+        file_content = s3_hook.read_key(key=file_key, bucket_name=bucket_name)
+        df = pd.read_csv(StringIO(file_content), dtype={'game_id': str} )
+        if df.empty:
+            print("The DataFrame is empty. No data to insert into the database.")
+            return None
+    except Exception as e:
+        print(f"Error reading from S3: {e}")
+        return None
 
     pg_hook = PostgresHook(postgres_conn_id='postgres_localhost')
     engine = pg_hook.get_sqlalchemy_engine()
 
     with engine.begin() as conn:
         df.to_sql('team_boxscore', conn, if_exists='append', index=False)
+    print("Data successfully loaded into PostgreSQL")
 
 with DAG(
     'get_yesterday_box_score',
