@@ -4,3 +4,4 @@ __pycache__/
 logs/
 dags/__pycache__
 sandbox.py
+images/
