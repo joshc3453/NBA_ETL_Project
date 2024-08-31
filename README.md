@@ -34,4 +34,14 @@ This NBA ETL (Extract, Transform, Load) project automates the collection, proces
    ```bash
    pip install -r requirements.txt
 
-In progress...
+3. **Set up Docker containers**:
+   ```bash
+   docker-compose up
+
+4. **Initialize the database**:
+    - Run SQL scripts to create necessary tables and schemas.
+    - Alternatively, use Docker to set up the database automatically.
+
+5. **Run the ETL pipeline**:
+    - Trigger the Airflow DAGs to start the ETL process.
+    - Monitor workflows via the Airflow web interface.
